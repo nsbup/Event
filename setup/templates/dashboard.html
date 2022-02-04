@@ -130,12 +130,14 @@
           {% for event in evnt %} 
             <tr>
               <td> {{ event.eid }}</td>
-              <td> {{ event.name }}</td>
+              <td> {{ event.name }} </td>
               <td>{{event.date}}</td>
               <td>{{event.time}}</td>
               <td>{{event.duration}}</td>
-              <td><a href="{% url 'afl_events:dashboard' %}">{{event.eid}}</a></td>
-              
+              <!-- <td><a class="btn btn-primary" href ="{ % abs_url afl_events:checkout_page %}"> Pay</a></td> -->
+              <form id="pay-amnt" method="POST" >
+              <td><button name="button" type="submit" id="pay-amnt" >Pay Amount</button></td>
+              </form>
             </tr>
           {% endfor %} 
   
@@ -235,8 +237,7 @@ $("#add-event").submit(function (e) {
             // 1. clear the form.
             $("#add-event").trigger('reset');
             // 2. focus to nickname input 
-            
-           
+
         },
         error: function (response) {
             // alert the error if any error occured
@@ -248,6 +249,29 @@ $("#add-event").submit(function (e) {
       $('#myModal').modal('toggle');
     });
     window.location.reload();
+})
+
+$("#pay-amnt").submit(function (e) {
+ alert("alerttt")
+ // preventing from page reload and default actions
+ e.preventDefault();
+ // serialize the data for sending the form data.
+ var serializedData = $(this).serialize();
+ console.log("serializedData")
+ console.log(serializedData)
+
+  // Generate URL without "id" bit
+  var url = "{% url 'afl_events:checkout_page' %}";
+
+  var id = $(this).attr('id');
+
+  // Construct the full URL with "id"
+  document.location.href = url ;
+
+ // make POST ajax call
+ 
+
+ 
 })
  </script>
 
