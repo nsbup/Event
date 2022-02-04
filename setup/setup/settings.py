@@ -23,7 +23,7 @@ TEMPLATE_DIR = os.path.join(BASE_DIR,"templates")
 
 SETTINGS_PATH = os.path.normpath(os.path.dirname(__file__))
 
-
+print("code runs from here!!!!-")
 
 
 # Quick-start development settings - unsuitable for production
@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'afl_events',
+    # 'payments.apps.PaymentsConfig'
+    # 'payments'
 ]
 
 MIDDLEWARE = [
@@ -163,6 +165,15 @@ MEDIA_URL = '/media/'
 STATICFILES_DIRS = (
     # os.path.join(PROJECT_DIR, 'staticfiles'),
 )
-print("STATIC_ROOT:::")
+print("STATIC_ROOT11:::")
 print(STATIC_ROOT)
 
+
+
+PAYMENT_HOST = 'localhost:8000'
+PAYMENT_USES_SSL = False
+PAYMENT_MODEL = 'afl_events.Payment'
+PAYMENT_VARIANTS = {
+    'default': ('payments.dummy.DummyProvider', {})}    
+
+    
