@@ -65,4 +65,6 @@ urlpatterns = [
     path('', TemplateView.as_view(template_name='home.html'), name='home'), # new
     path('post/ajax/add_event', addEvent, name = "add_event"),
     url(r'^add-payment/(?P<e_id>\d+)/$', PayAmount.as_view(), name='pay_amount'),
+
+    
 ]
