@@ -266,6 +266,8 @@ class Payment_details(View):
         payment = get_object_or_404(get_payment_model(), id=payment_id)
         print("payment___")
         print(payment)
+
+        print("11111111")
         try:
             form = payment.get_form(data=self.request.POST or None)
             print("payment form___")
@@ -274,4 +276,15 @@ class Payment_details(View):
             return redirect(str(redirect_to))
         print("111")    
         return TemplateResponse(self.request, 'payment.html',
-                                {'form': form, 'payment': payment})                                
+                                {'form': form, 'payment': payment})     
+    def post(self, request, *args, **kwargs):
+        print("post paymnt!!!!")
+        print(request.POST.dict())
+        print(request.POST["status"])
+        if request.POST["status"] == "confirmed":
+            return TemplateResponse(self.request, 'payment/p_success.html',
+                                {}) 
+        else:
+            return TemplateResponse(self.request, 'payment/p_faild.html',
+                                {})                        
+        pass
