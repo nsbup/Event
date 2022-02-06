@@ -43,3 +43,14 @@ class Payment(BasePayment):
         # you'll probably want to retrieve these from an associated order
         yield PurchasedItem(name='The Hound of the Baskervilles', sku='BSKV',
                             quantity=9, price=Decimal(10), currency='USD')
+
+
+
+class PaymentOption(models.Model):
+    CHOICES = (
+        ('default', 'Default'),
+        ('stripeintent_subscription', 'Card Payment'),
+    )
+    choice = models.CharField(max_length=100, choices=CHOICES)
+    class Meta:
+        managed = False	

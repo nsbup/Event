@@ -5,7 +5,7 @@ from django.forms.formsets import formset_factory
 from django import forms
 from django.utils.translation import gettext as _
 
-from afl_events.models import Event
+from afl_events.models import Event,PaymentOption
 
 class DateInput(forms.DateInput):
     input_type = 'date'
@@ -49,4 +49,19 @@ class EventAddForm(forms.ModelForm):
             'date' :_("Event Date"),
             'time' :_("Event Time"),
             'duration' :_("Duration"),
+        }
+
+class PaymentOptionForm(forms.ModelForm):
+    ## change the widget of the date field.
+    
+    def __init__(self, *args, **kwargs):
+        super(PaymentOptionForm, self).__init__(*args, **kwargs)
+        
+
+    class Meta:
+        model = PaymentOption
+        fields = ("__all__")    
+      
+        labels 	= {
+            'choice' : _("Payment Choice"),
         }

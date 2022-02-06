@@ -7,6 +7,7 @@ from django.contrib.auth import views as auth_views
 from django.views.generic import TemplateView
 from django.contrib import admin
 from afl_events.views import addEvent,PayAmount
+from django.conf.urls import include
 # from afl_events.checkout import create_checkout_session
 # from django.conf.urls import include, path
 
@@ -56,8 +57,9 @@ urlpatterns = [
     path('', TemplateView.as_view(template_name='home.html'), name='home'), # new
     path('post/ajax/add_event', addEvent, name = "add_event"),
     # url(r'^checkout/(?P<e_id>\d+)/$', views.Payment_details.as_view(), name='checkout_page'),
-    path('checkout/', views.Payment_details.as_view(), name='checkout_page'),
+    path('checkout/', views.Payment_details.as_view(), name='checkout_page_default'),
+    path('checkout/<str:service>', views.Payment_details.as_view(), name='checkout_page'),
 
     # url(r'^checkout/(?P<e_id>\d+)/$',views.Payment_details.as_view(),name='checkout_page'),
-    # path('payments/', include('payments.urls')),
+    
 ]

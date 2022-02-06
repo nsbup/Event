@@ -135,16 +135,20 @@
               <td>{{event.time}}</td>
               <td>{{event.duration}}</td>
               <!-- <td><a class="btn btn-primary" href ="{ % abs_url afl_events:checkout_page %}"> Pay</a></td> -->
-              <form id="pay-amnt" method="POST" >
-              <td><button name="button" type="submit" id="pay-amnt" >Pay Amount</button></td>
+              <form id="pay-amnt" class ="pay-amnt" method="POST" >
+                  
+              <td>
+                  {% csrf_token %}
+                <!-- <button name="button" type="submit" id="pay-amnt"  >Pay Amount</button> -->
+                <button type="button" class="btn btn-info btn-sm pay-amnt1" id="pay-amnt1"  data-toggle="modal" data-target="#mypayment" >Pay Amount</button>
+              </td>
               </form>
             </tr>
           {% endfor %} 
   
           </table>
           
-          </body>
-          </html>
+          
           
           <!-- Trigger the modal with a button -->
           <button type="button" class="btn btn-info btn-sm addevnmdl"  data-toggle="modal" data-target="#myModal">New Event</button>
@@ -197,6 +201,11 @@
                 </div>
               </div>
               
+
+
+
+
+             
             </div>
           </div>
                     
@@ -206,9 +215,59 @@
         </div>
      
     </div>
+
+     <!----payment section-------->
+
+     <div class="modal fade" id="mypayment" role="dialog">
+        <div class="modal-dialog">
+        
+          <!-- Modal content-->
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+
+         
+         
+             <form id="add-payment" method="POST" class="m-form" action="{{request.path}}"  enctype="multipart/form-data" autocomplete="off" novalidate>
+              <div class="row">
+
+                  {% csrf_token %}
+                  {% for field in paymentoptionform %}
+                  <div class="row g-3 " style="
+                  padding-left: 17px;
+                  padding-right: 38px; ">
+                        
+
+                  <div class="form-group">
+                    <label class="col-md-6 mt-md-0 mt-3" for="{{form.field.auto_id}}">{{field.label}}</label>
+                    <div class="col-md-6 mt-md-0 mt-3" id ="{{form.field.auto_id}}">
+                      {{field}}
+                    </div>
+                  </div>
+                </div>
+                  {% endfor %}
+
+                  <input type="submit" id ="pay-now" class="btn btn-primary float-right" value="Pay Now"style="margin-left: 15px;">
+                  
+                </form>
+
+
+                </div>
+            </div>
+
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+
+                </div>
+            </div>
+          </div>
   </section>
 
   <script>
+    
    let sidebar = document.querySelector(".sidebar");
 let sidebarBtn = document.querySelector(".sidebarBtn");
 sidebarBtn.onclick = function() {
@@ -251,27 +310,55 @@ $("#add-event").submit(function (e) {
     window.location.reload();
 })
 
-$("#pay-amnt").submit(function (e) {
+// $("#pay-amnt").submit(function (e) {
+//  alert("alerttt")
+//  // preventing from page reload and default actions
+//  e.preventDefault();
+//  // serialize the data for sending the form data.
+//  var serializedData = $(this).serialize();
+//  console.log("serializedData")
+//  console.log(serializedData)
+
+//   // Generate URL without "id" bit
+//   var url = "{% url 'afl_events:checkout_page_default'  %}";
+
+//   var id = $(this).attr('id');
+
+//   // Construct the full URL with "id"
+//   document.location.href = url+serializedData['choice'] ;
+
+//  // make POST ajax call
+ 
+
+ 
+// })
+// $(".pay-amnt").submit(function (e) {
+//   alert('fgghghg')
+
+//  e.preventDefault();
+//  $('#mypayment').modal('toggle');
+
+ 
+// })
+$("#add-payment").submit(function (e) {
  alert("alerttt")
  // preventing from page reload and default actions
  e.preventDefault();
  // serialize the data for sending the form data.
- var serializedData = $(this).serialize();
- console.log("serializedData")
- console.log(serializedData)
+
+
 
   // Generate URL without "id" bit
-  var url = "{% url 'afl_events:checkout_page' %}";
+  var url = "{% url 'afl_events:checkout_page_default'  %}";
 
   var id = $(this).attr('id');
 
   // Construct the full URL with "id"
-  document.location.href = url ;
+  document.location.href = url+$('select[name="choice"]').val() ;
 
  // make POST ajax call
  
 
- 
 })
  </script>
 

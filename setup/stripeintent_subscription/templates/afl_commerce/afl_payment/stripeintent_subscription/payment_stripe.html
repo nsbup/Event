@@ -1,0 +1,122 @@
+{% extends base_extend %}
+{% load static %}
+{% load widget_tweaks %}
+{% load afl_validate %}
+{% load templatehelpers %}
+{% load i18n %}
+{% load afl_language %}
+{% block maintitle %}{{label}}{% endblock %}
+{% block headerscript %}
+<script src="https://js.stripe.com/v3/"></script>
+{% endblock %}
+{% block content %}
+
+{% if not user.is_authenticated %}
+	<div class="m-content__body">
+	<div class="m-content__width w-550">
+	<div class="m-content__title"><h3>{% trans 'Card Payment' %}</h3></div>
+	<div class="m-content__sub-title">{% trans 'We accept card purchases from Visa, MasterCard, and all other major cards.' %}</div>
+{% else %}
+	<div class="m-content">
+	<div class="row justify-content-md-center">
+	<div class="col-lg-6 col-md-9">
+{% endif %}
+
+
+	<form method="{{form.method|default:'POST'}}" class="{{form.class}} m-form" action="{{form.action|default:request.path}}"  {% if files %} enctype="multipart/form-data"{% endif %} autocomplete="off" novalidate >
+		<div class="m-portlet m-portlet--mobile{% if not user.is_authenticated %} m-portlet--unair{% endif %} m-portlet--rounded">
+			{% if user.is_authenticated %}
+        <div class="m-portlet__head justify-content-center">
+          <div class="m-portlet__head-caption">
+            <div class="m-portlet__head-title">
+              <h3 class="m-portlet__head-text">
+                {%trans 'Card Payment' %}
+              </h3>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+			<div class="m-portlet__body stripe-card-container">
+				{% csrf_token %}
+				{% if form.non_field_errors %}
+				<div class="alert alert-danger" role="alert">
+					{% for error in form.non_field_errors %}
+						{{ error }}
+					{% endfor %}
+				</div>
+				{% endif %}
+
+				{% for hidden_field in form.hidden_fields %}
+					{% if hidden_field.errors %}
+					<div class="alert alert-danger alert-dismissible fade show" role="alert">
+						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+						{% for error in hidden_field.errors %}
+							(Hidden field {{ hidden_field.name }}) {{ error }}
+						{% endfor %}
+					</div>
+					{% endif %}
+					{{hidden_field}}
+				{% endfor %}
+        <div class="credit-card">
+          <div class="credit-card-list old-card-details">
+            {{form.options}}
+          </div>
+          <div class="new-card-details">
+            {% if form.name %}
+              <div class="field-container">
+                <span>{{ form.name.label_tag }}</span>
+                {{ form.name }}
+                {{form|afl_validate_error:form.name}}
+              </div>
+            {% endif %}
+            <div class="sr-input sr-card-element" id="card-element"></div>
+          </div>
+        </div>
+			</div>
+			{% if user.is_authenticated and form.buttons %}
+        <div class="m-portlet__foot m-portlet__foot--fit">
+          <div class="m-form__actions text-center">
+						{% include 'buttons.html' with buttons=form.buttons %}
+					</div>
+			</div>
+			{% endif %}
+		</div>
+    {% if not user.is_authenticated and form.buttons %}
+      <div class="m-content__action">
+       	{% include 'buttons.html' with buttons=form.buttons %}
+      </div>
+    {% endif %}
+	</form>
+
+{% if not user.is_authenticated %}
+	</div>
+	</div>
+{% else %}
+	</div>
+	</div>
+	</div>
+{% endif %}
+
+{% endblock %}
+
+
+{% block stylesheet %}
+	{{form_media.css}}
+{% endblock %}
+
+{% block javascript %}
+<script type="text/javascript">
+
+	$(document).ready(function() {
+
+		$(':input').removeAttr('placeholder');
+
+	});
+
+</script>
+{% if form_media.js %}
+		{{form_media.js}}
+{% endif %}
+{% endblock %}

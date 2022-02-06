@@ -1,0 +1,101 @@
+{% load widget_tweaks %}
+{% load afl_validate %}
+{% load afl_language %}
+{% load compress %}
+<div class="m-portlet__body p-0 stripe-card-container">
+    <div class="m-loader m-loader--brand custom-loader" style="width: 30px; display: none;"></div>  
+    {% if form.media_ajax %}
+        {% if messages %}
+                {% include "message.html" with messages=messages %}
+        {% endif %}
+    {% endif %}
+    <!--begin: Form -->
+    <form method="{{form.method|default:'POST'}}" class="{{form.class}} m-form m-form--fit m-form--label-align-right" action="{{form.action|default:request.path}}" novalidate>
+        <div class="m-portlet__body">
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+            <div class="alert alert-danger" role="alert">
+                {% for error in form.non_field_errors %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            {% for hidden_field in form.hidden_fields %}
+                {% if hidden_field.errors %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    {% for error in hidden_field.errors %}
+                        (Hidden field {{ hidden_field.name }}) {{ error }}
+                    {% endfor %}
+                    
+                </div>
+                {% endif %}
+                {{hidden_field}}
+            {% endfor %}
+
+            <div class="form-group m-form__group row">
+                
+            {% for field in form.visible_fields %}
+                {% if field.field.widget.input_type == 'checkbox' %}
+                <div class="col-lg-2 pt-5">
+                    <label class="m-checkbox m-checkbox--solid">
+                            {% I18n_advanced_label_tag field %}
+                            {{form|afl_validate_help_text:field}}
+                            {% render_field field class=form|afl_validate_class:field placeholder=field.label %}
+                            {{form|afl_validate_error:field}}
+                            
+                        <span></span>
+                    </label>          
+                </div>     
+                {% else %}
+                <div class="col-lg-6 pt-5">
+                    {% I18n_advanced_label_tag field %}
+                    {{form|afl_validate_help_text:field}}
+                    {% render_field field class=form|afl_validate_class:field placeholder=field.label %}
+                    {{form|afl_validate_error:field}}
+                    
+                    
+                </div>
+                {% endif %}
+            {% endfor %}
+            <div class="col-lg-6 pt-5">
+                <div class="sr-input sr-card-element" id="card-element"></div>
+            </div>
+            </div>
+        </div>
+        <div class="m-portlet__foot m-portlet__foot--fit">
+            {% if form.buttons %}
+            <div class="m-form__actions">
+                {% include 'buttons.html' with buttons=form.buttons %}
+            </div>
+           {% endif %}
+            
+        </div>
+    </form>
+    
+    
+    <!--end::Form-->
+</div>
+
+
+{% block stylesheet %}
+
+{% if form.media_ajax.css %}
+    {{form.media_ajax.css}}
+
+
+{% endif %}
+{% endblock %}
+
+
+<!-- Load Js -->
+{% block javascript %}
+		{% if form.media_ajax.js %}
+			{{form.media_ajax.js}}
+		{% endif %}
+{% endblock %}
+

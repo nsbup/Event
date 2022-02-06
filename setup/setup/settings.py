@@ -47,7 +47,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'stripeintent_subscription',
     'afl_events',
+    'django_extensions',
+   
     # 'payments.apps.PaymentsConfig'
     # 'payments'
 ]
@@ -174,6 +177,11 @@ PAYMENT_HOST = 'localhost:8000'
 PAYMENT_USES_SSL = False
 PAYMENT_MODEL = 'afl_events.Payment'
 PAYMENT_VARIANTS = {
-    'default': ('payments.dummy.DummyProvider', {})}    
+    'default': ('payments.dummy.DummyProvider', {}),
+    'stripeintent_subscription':('stripeintent_subscription.StripeIntentSubscriptionProvider',{
+        'public_key':'pk_test_51KPOxnSAjGAxwjGQjbLjNrZQ8ugFrYL5fddRDeHBQUBJJnMOA4dw3AsOWtyKP1CgxZbgM0QrNRneIjpkxkQvrgbp00f10v9rty',
+        'secret_key':'sk_test_51KPOxnSAjGAxwjGQzI4x0KZAnXiypqxAe8P3BGEUFv99Kwi1SiRh49imMNCYj0O0tYxTT7wXim6AzOduF26FwfM800ls1m1hC2'
+    }),
+}    
 
     

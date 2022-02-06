@@ -6,15 +6,25 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from afl_events.models import Admin
 import json
-from afl_events.forms import RegisterForm,EventAddForm
+import builtins
+from afl_events.forms import RegisterForm,EventAddForm,PaymentOptionForm
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
-from afl_events.models import Event
+from afl_events.models import Event,PaymentOption
 from django.utils.translation import gettext as _
 from django.core import serializers
 from django.http import JsonResponse
 from django.views import View
 import urllib.request
+from pprint import pprint
+
+def pp(*args):
+	
+    for arg in args:
+        pprint(arg)
+        pass
+
+builtins.pp = pp
 
 # Create your views here.
 def index(request):
@@ -177,6 +187,7 @@ def user_home(request):
 def dashboard(request):
     evnt = Event.objects.all()
     addevntform = EventAddForm()
+    paymentoptionform = PaymentOptionForm()
 
     context ={}
     headers = {
@@ -189,7 +200,8 @@ def dashboard(request):
                 
             }
     context['headers'] = headers        
-    context['addevntform'] = addevntform        
+    context['addevntform'] = addevntform 
+    context['paymentoptionform'] = paymentoptionform       
     context['evnt'] = evnt  
     return render(request,'dashboard.html',context)    
 def addevent(request):
@@ -230,16 +242,18 @@ class Payment_details(View):
     #     self.payment_instance()
 
 	#     return super(Payment_details, self).dispatch(request, *args, **kwargs)
+    template ="payment.html"
     def get(self, request, *args, **kwargs):
         from decimal import Decimal
 
         from payments import get_payment_model
 
         Payment = get_payment_model()
+        service = kwargs.get('service','default')
         print("paymnetmodel____")
         print(Payment)
         payment = Payment.objects.create(
-            variant='default',  # this is the variant from PAYMENT_VARIANTS
+            variant=service,  # this is the variant from PAYMENT_VARIANTS
             description='Event purchase',
             total=Decimal(120),
             tax=Decimal(20),
@@ -272,15 +286,17 @@ class Payment_details(View):
             form = payment.get_form(data=self.request.POST or None)
             print("payment form___")
             print(form)
+            if(hasattr(form, 'template')):
+                self.template = form.template
+            print(self.template)
         except RedirectNeeded as redirect_to:
             return redirect(str(redirect_to))
         print("111")    
-        return TemplateResponse(self.request, 'payment.html',
+        return TemplateResponse(self.request, self.template,
                                 {'form': form, 'payment': payment})     
     def post(self, request, *args, **kwargs):
         print("post paymnt!!!!")
         print(request.POST.dict())
-        print(request.POST["status"])
         if request.POST["status"] == "confirmed":
             return TemplateResponse(self.request, 'payment/p_success.html',
                                 {}) 

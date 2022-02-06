@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% load static %}
+{% block headjavascript %}
+<script src="https://js.stripe.com/v3/"></script>
+
+{% endblock %}
+{% block content %}
+
+
+<div class="wrapper-content">
+	<div class="cart-wrapper">
+		<div class="container inner-container">
+			<div class="cart-wizard-wrapper py-35">
+				<div class="cart-wizard-inner">
+					<div class="m-portlet__body stripe-card-container">
+						<form method="{{form.method|default:'POST'}}" class="{{form.class}} m-form m-form--fit m-form--label-align-right" action="{{form.action|default:request.path}}"  {% if files %} enctype="multipart/form-data"{% endif %} autocomplete="off" novalidate >
+							
+								{% csrf_token %}
+								<div class="container-fluid">
+									{% if form.non_field_errors %}
+									<div class="alert alert-danger" role="alert">
+										{% for error in form.non_field_errors %}
+											{{ error }}
+										{% endfor %}
+									</div>
+									{% endif %}
+									
+									{% for hidden_field in form.hidden_fields %}
+										{% if hidden_field.errors %}
+										<div class="alert alert-danger alert-dismissible fade show" role="alert">
+											<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+											{% for error in hidden_field.errors %}
+												(Hidden field {{ hidden_field.name }}) {{ error }}
+											{% endfor %}
+											
+										</div>
+										{% endif %}
+										{{hidden_field}}
+									{% endfor %}
+								</div>
+
+								<div class="form-group m-form__group payment-last-wrapper">
+									<div class="row no-gutters">
+										
+										<div class="credit-card col-md-8">
+											<div class="new-card-details">
+												{{ form.as_p }}
+												<div class="sr-input sr-card-element" id="card-element"></div>
+											</div>
+											<div class="m-portlet__foot m-portlet__foot--fit pl-2 col-md-12">
+												<button 
+												type="Submit"
+												class="bitaps_button_confirm btn btn-brand"
+												style='white-space:normal'
+											
+												label="Pay Now"
+												
+												initial-url={% url 'stripeintent_subscription:public_key'  %}
+												pay-url={% url 'stripeintent_subscription:public_key'  %}
+												id='stripe-submit-button'
+												
+												>Pay Amount</button>
+											</div>
+											
+										</div>
+										
+									</div>
+								</div>
+							
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+
+{% block css %}
+<style type="text/css">
+
+
+
+    .form-eps-group{margin:20px 0 10px;position:relative;}
+    .form-eps-group label{padding:10px;pointer-events:none;position:absolute;left:15px;top:5px;transition:0.2s;transition-timing-function:ease;transition-timing-function:cubic-bezier(0.25, 0.1, 0.25, 1);opacity:0.5;font-size:1rem;}
+    .form-eps-group input:focus+label{opacity:1;transform:scale(0.75) translateY(-100%) translateX(-30px);}
+    .form-eps-group input:is(:placeholder-shown)+label{opacity:1;transform:scale(0) translateY(-100%) translateX(-30px);}
+    .form-eps-group.open>label{opacity:1;transform:scale(0.75) translateY(-100%) translateX(-30px);}
+    .form-eps-group input:is(:-ms-input-placeholder)+label{opacity:1;transform:scale(0.75) translateY(-100%) translateX(-30px);}
+    .form-eps-group .select2-container--default .select2-selection--single .select2-selection__rendered{line-height: 42px;}
+    </style>
+{% endblock %}
+
+{% block javascript %}
+<script type="text/javascript">
+
+	$(document).ready(function() {
+
+		$(':input').removeAttr('placeholder');
+
+	});
+
+</script>
+{% if form.media %}
+	{{form.media}}
+{% endif %}
+{% endblock %}

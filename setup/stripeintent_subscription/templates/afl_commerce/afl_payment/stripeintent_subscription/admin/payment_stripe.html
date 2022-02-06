@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+{% load afl_validate %}
+{% load i18n %}
+{% block maintitle %}{{label}}{% endblock %}
+{% block headerscript %}
+<script src="https://js.stripe.com/v3/"></script>
+
+{% endblock %}
+{% block content %}
+<div class="m-content">
+    <form method="{{form.method|default:'POST'}}" class="{{form.class}} m-form m-form--fit m-form--label-align-right"
+        action="{{form.action|default:request.path}}" {% if files %} enctype="multipart/form-data" {% endif %}
+        autocomplete="off" novalidate>
+        <div class="m-portlet__body">
+            {% csrf_token %}
+            <div class="container-fluid">
+                {% if form.non_field_errors %}
+                <div class="alert alert-danger" role="alert">
+                    {% for error in form.non_field_errors %}
+                    {{ error }}
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% for hidden_field in form.hidden_fields %}
+                {% if hidden_field.errors %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    {% for error in hidden_field.errors %}
+                    (Hidden field {{ hidden_field.name }}) {{ error }}
+                    {% endfor %}
+
+                </div>
+                {% endif %}
+                {{hidden_field}}
+                {% endfor %}
+            </div>
+
+            <div class="form-group m-form__group payment-last-wrapper">
+                <div class="row no-gutters">
+                    <div class="credit-card old-card-details col-md-4 field-container">
+                        {{form.options}}
+                    </div>
+                    <div class="credit-card new-card-details col-md-8">
+                        <div class="row">
+                            <div class="col-md-6 field-container">
+                                <span>{{ form.name.label_tag }}</span>
+                                {{ form.name }}
+                                {{form|afl_validate_error:form.name}}
+                            </div>
+                            <div class="col-md-6 field-container ">
+                                <span>{{ form.number.label_tag }}</span>
+                                {{ form.number }}
+                                {{form|afl_validate_error:form.number}}
+                            </div>
+                            <div class="col-md-6 field-container ">
+                                <span>{{ form.cvv2.label_tag }}</span>
+                                {{form.cvv2}}
+                                {{form|afl_validate_error:form.cvv2}}
+                            </div>
+                            <div class="col-md-6 field-container year-month">
+                                <span>{{ form.expiration.label_tag }}</span>
+                                {{ form.expiration }}
+                                {{form|afl_validate_error:form.expiration}}
+                            </div>
+                            
+                        </div>
+                    </div>
+                    <div class="m-portlet__foot m-portlet__foot--fit pl-2">
+                    {% if form.buttons %}
+                            <div class="m-form__actions ml-10">
+                            {% include 'buttons.html' with buttons=form.buttons %}
+                            </div>
+                    {% endif %}
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="form-extra-div"></div> -->
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block stylesheet %}
+{{form_media.css}}
+
+{% endblock %}
+
+{% block javascript %}
+{% if form_media.js %}
+{{form_media.js}}
+{% endif %}
+{% endblock %}

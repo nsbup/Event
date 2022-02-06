@@ -1,0 +1,66 @@
+{% load widget_tweaks %}
+{% load afl_validate %}
+{% load templatehelpers %}
+{% load compress %}
+{% load afl_language %}
+{% load afl_payment_tags %}
+{% load static %}
+{% load i18n %}
+
+{% if  form.hidden_fields %}
+	<div class="alert-group">
+		{% for hidden_field in form.hidden_fields %}
+			{% if hidden_field.errors %}
+			<div class="alert alert-danger alert-dismissible fade show" role="alert">
+				<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				{% for error in hidden_field.errors %}
+					(Hidden field {{ hidden_field.name }}) {{ error }}
+				{% endfor %}
+			</div>
+			{% endif %}
+			{{hidden_field}}
+		{% endfor %}
+	</div>
+{% endif %}
+<div class="payment-stripe-info">
+	{% if form.non_field_errors %}
+		<div class="alert alert-danger" role="alert">
+			{% for error in form.non_field_errors %}
+				{{ error }}
+			{% endfor %}
+		</div>
+	{% endif %}
+	{% if payment_display %}
+		<!--begin:: Widgets/Stats2-1 -->
+		{% for key, data in payment_display.items %}
+			<div class="card card10 card10-min card10-sm card10-border-top-first-child-none card10-border-radius-none">
+		    <div class="card-header">
+		      <div class="card-header--title">{{data.title}}</div>
+		    </div>
+		    <div class="card-body">
+		     	<div class="m--padding-bottom-15{% if data.value_class %} {{data.value_class}}{% endif %}">{{data.value|safe}}</div>
+		    </div>
+		 	</div>
+		{% endfor %}
+		<!--end:: Widgets/Stats2-1 -->
+	{% endif %}
+	{% if form.buttons %}
+		<div class="form-actions">
+			{% include 'buttons.html' with buttons=form.buttons %}
+		</div>
+	{% endif %}
+</div>
+
+{% block stylesheet %}
+{% if form.media_ajax.css %}
+{{form.media_ajax.css}}
+{% endif %}
+{% endblock %}
+
+{% block javascript %}
+{% if form_media.js %}
+{{form_media.js}}
+{% endif %}
+{% endblock %}

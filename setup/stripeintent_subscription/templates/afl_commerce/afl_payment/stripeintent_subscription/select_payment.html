@@ -1,0 +1,35 @@
+{% load widget_tweaks %}
+{% load afl_validate %}
+{% load afl_language %}
+{% load compress %}
+{% load i18n %}
+{% load templatehelpers %}
+
+{% block stylesheet %}
+
+{% endblock %}
+
+<form class="gen payment-block pl-60 payment-form-{{key}}"  method="POST" action=".">
+    {% csrf_token %}
+                                                                                       
+    <input type="hidden" name="varient" value="{{key}}">
+    
+    {% if prev %}
+    <button class="btn btn-brand  mr-2 " onclick="window.location.href='{% abs_url prev.url_name request %}';return false;">{% trans 'Cancel' %}</button>
+    {% else %}
+        <button class="btn btn-brand  mr-2 " onclick="window.location.href='{% abs_url billing_address request %}';return false;">{% trans 'Cancel' %}</button>
+        <input type="submit" value="{% trans 'Cancel' %}" class="btn btn-brand  mr-2 ">
+    {% endif %}
+
+    {% if next %}
+        <input type="submit" value="{{button_next_label}}" class="btn btn-brand  mr-2 ">
+    {% else %}
+        <input type="submit" value="{% trans 'Continue' %}" class="btn btn-brand  mr-2 ">
+    {% endif %}
+    
+</form>
+<!-- Load Js -->
+{% block javascript %}
+		
+{% endblock %}
+

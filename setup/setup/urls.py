@@ -27,5 +27,6 @@ urlpatterns = [
     # path(r'^/',views.index,name='index'),
     path('afl/',include('afl_events.urls')),
     path('admin/', admin.site.urls),
+    path('payments/stripe', include('stripeintent_subscription.urls')),
 
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
